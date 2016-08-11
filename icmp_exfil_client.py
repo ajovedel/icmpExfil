@@ -14,12 +14,10 @@ def generateICMPHeader(icmpID):
     return struct.pack("!bbHHh", 8, 0, 0, random.randint(0,65535), icmpID)
 
 
-
 def getSize(fileObject):
     # move the cursor to the end of the file
     fileObject.seek(0,2)
     return fileObject.tell()
-
 
 
 """
@@ -50,13 +48,11 @@ def checksum(source_string):
     return answer
 
 
-
 def enc_base64(dataBlob):
     return base64.b64encode(dataBlob)
 
 
 def main(options):
-
     icmpSeqNum = 0
 
     # Open raw ICMP socket
@@ -74,17 +70,17 @@ def main(options):
     if (fileSize % options.chunk_size != 0 ):
         numPackets += 1
 
-    print "Number of packets to send: " + str(numPackets)
-    print "Estimated time (seconds) to send file: " + str((numPackets * options.sleep) / 1000.0)
-
     # Read chunks and send them
     while numPackets > 0:
         chunk = f.read(options.chunk_size)
 
         if(options.encoding.lower() == "base64".lower()):
             chunk = enc_base64(chunk)
-
-        print "CHUNK BEING SENT WITH SEQNUM " + str(icmpSeqNum) + " to " + options.dest + ": \n" + chunk + "\n"
+        
+        if(options.verbose == True):
+            print "Number of packets left to send: " + str(numPackets)
+            print "Estimated time to send finish: " + str((numPackets * options.sleep) / 1000.0) +" seconds"
+            print "CHUNK BEING SENT WITH SEQNUM " + str(icmpSeqNum) + " to " + options.dest + ": \n" + chunk + "\n\n"
 
         # Generate ICMP header
         ICMPHeader = generateICMPHeader(icmpSeqNum)
@@ -100,16 +96,15 @@ def main(options):
         time.sleep(options.sleep / 1000.0)
 
 
-
 if __name__ == '__main__':
-
     # Parse command line options
     parser = OptionParser()
     parser.add_option("-f", "--filename", help="File to send", metavar="FILE")
     parser.add_option("-d", "--dest", action="store", type="string", help="Host to send file")
-    parser.add_option("-c", "--chunk_size", type="int", help="Size of ICMP data field")
-    parser.add_option("-s", "--sleep", type="int", help="Miliseconds to wait between packets")
-    parser.add_option("-e", "--encoding", type="string", help="Encoding type (e.g. base64)")
+    parser.add_option("-c", "--chunk_size", type="int", default=512,help="Size of ICMP data field")
+    parser.add_option("-s", "--sleep", type="int", default=0, help="Miliseconds to wait between packets")
+    parser.add_option("-e", "--encoding", type="string", default="", help="Encoding type (e.g. base64)")
+    parser.add_option("-v", "--verbose", default=True, help="Print helpful information")
     (options, args) = parser.parse_args()
 
     main(options)
