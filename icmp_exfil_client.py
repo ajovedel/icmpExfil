@@ -56,11 +56,6 @@ def enc_base64(dataBlob):
 
 
 
-def dec_base64(dataBlob):
-    return base64.b64decode(dataBlob)
-
-
-
 def main(options):
 
     icmpSeqNum = 0
