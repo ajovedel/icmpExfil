@@ -55,7 +55,6 @@ def enc_base64(dataBlob):
     return base64.b64encode(dataBlob)
 
 
-
 def main(options):
 
     icmpSeqNum = 0
@@ -81,11 +80,11 @@ def main(options):
     # Read chunks and send them
     while numPackets > 0:
         chunk = f.read(options.chunk_size)
-        print "chunk: " + chunk
 
         if(options.encoding.lower() == "base64".lower()):
-            print "IM HERE!"
             chunk = enc_base64(chunk)
+
+        print "CHUNK BEING SENT WITH SEQNUM " + str(icmpSeqNum) + " to " + options.dest + ": \n" + chunk + "\n"
 
         # Generate ICMP header
         ICMPHeader = generateICMPHeader(icmpSeqNum)
