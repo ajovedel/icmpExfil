@@ -18,13 +18,22 @@ def listen():
     data, addr = s.recvfrom(1508)
     #print "Packet from %r: %r" % (addr,data)
 
-    if(options.encoding.lower() == "base64".lower()):
-        data = dec_base64(data)
+    print "DATA RECEIVED: \n" + data[(IPV4_HEAD_SIZE + ICMP_HEAD_SIZE):] + "\n"
 
-    print data[IPV4_HEAD_SIZE+ICMP_HEAD_SIZE:]
+    # Decode data before writting
+    if(options.encoding.lower() == "base64".lower()):
+        dec_data = dec_base64(data[(IPV4_HEAD_SIZE + ICMP_HEAD_SIZE):]) + "\n"
+        print "DECODED DATA: \n" + dec_data
+        f.write(dec_data)
+
+    # Write plaintext data directly
+    else:
+        f.write(data[(IPV4_HEAD_SIZE + ICMP_HEAD_SIZE):])
+
+
+
     # Skip IP and ICMP headers and starting
     # writing data at the ICMP payload field
-    f.write(data[IPV4_HEAD_SIZE+ICMP_HEAD_SIZE:])
 
 
 
