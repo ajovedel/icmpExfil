@@ -19,6 +19,8 @@ def listen():
     #print "Packet from %r: %r" % (addr,data)
 
     if(options.encoding.lower() == "base64".lower()):
+        data = dec_base64(data)
+
     print data[IPV4_HEAD_SIZE+ICMP_HEAD_SIZE:]
     # Skip IP and ICMP headers and starting
     # writing data at the ICMP payload field
